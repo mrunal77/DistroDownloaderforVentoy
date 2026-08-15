@@ -1,0 +1,28 @@
+id: parrot
+name: Parrot OS
+family: security
+description: Parrot Security OS for security and privacy
+official_website: https://parrotsec.org
+download_page: https://parrotsec.org/download/
+logo: assets/logos/parrot.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - MATE
+  - KDE
+release_type: rolling
+iso_provider: official-directory
+base_url: https://deb.parrotsec.org/parrot/iso/
+checksum_provider: null
+signature_provider: null
+verification_method: none
+download_strategy: official-directory
+iso_pattern: parrot-security-.*-amd64\.iso$
+arch_filter: amd64
+version: 6.2
+iso:
+  download_url: https://deb.parrotsec.org/parrot/iso/parrot-security-6.2_amd64.iso
+  file_name: parrot-security-6.2_amd64.iso
+  size: 4200000000
+  sha256: null
+  release_date: 2026-04-20

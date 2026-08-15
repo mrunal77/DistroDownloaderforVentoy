@@ -1,0 +1,26 @@
+id: opensuse-leap
+name: openSUSE Leap
+family: suse
+description: openSUSE Leap stable distribution
+official_website: https://opensuse.org
+download_page: https://opensuse.org/download/
+logo: assets/logos/opensuse.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - GNOME
+  - KDE
+release_type: stable
+iso_provider: official-directory
+base_url: https://download.opensuse.org/distribution/leap/15.6/iso/x86_64/
+checksum_provider: https://download.opensuse.org/distribution/leap/15.6/iso/x86_64/SHA256SUMS
+verification_method: sha256
+download_strategy: official-directory
+iso_pattern: openSUSE-Leap-15\.6.*x86_64\.iso$
+arch_filter: x86_64
+version: 15.6
+iso:
+  download_url: https://download.opensuse.org/distribution/leap/15.6/iso/x86_64/openSUSE-Leap-15.6-DVD-x86_64.iso
+  file_name: openSUSE-Leap-15.6-DVD-x86_64.iso
+  size: 4500000000
+  release_date: 2026-03-15

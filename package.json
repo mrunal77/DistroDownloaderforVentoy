@@ -1,0 +1,112 @@
+{
+  "name": "ventoy-linux-distro-downloader",
+  "version": "0.3.0",
+  "type": "module",
+  "description": "Electron app to stream Linux ISOs directly to Ventoy USB drives with live checksum verification.",
+  "main": "main.cjs",
+  "bin": {
+    "linux-iso-manager": "./src/main/cli-bin.cjs"
+  },
+  "scripts": {
+    "start": "node scripts/start.cjs",
+    "dev": "node scripts/start.cjs",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "test": "node tests/run.cjs",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:security": "vitest run tests/security",
+    "test:watch": "vitest",
+    "lint": "eslint src tests preload.cjs main.cjs --ext .js,.jsx,.ts,.tsx,.cjs",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run lint && npm run typecheck && npm run test && electron-forge make",
+    "prepare": "husky"
+  },
+  "keywords": [
+    "electron",
+    "ventoy",
+    "iso",
+    "downloader"
+  ],
+  "author": "",
+  "license": "MIT",
+  "overrides": {
+    "yauzl": "3.3.1"
+  },
+  "dependencies": {
+    "axios": "^1.19.0",
+    "drivelist": "^12.0.2",
+    "lucide-react": "^1.28.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.11.2",
+    "@electron-forge/maker-deb": "^7.11.2",
+    "@electron-forge/maker-rpm": "^7.11.2",
+    "@electron-forge/plugin-vite": "^7.11.2",
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@typescript-eslint/eslint-plugin": "^8.67.0",
+    "@typescript-eslint/parser": "^8.67.0",
+    "@vitejs/plugin-react": "^6.0.5",
+    "@vitest/coverage-v8": "^4.1.10",
+    "electron": "^43.3.0",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react": "^7.37.5",
+    "husky": "^9.0.0",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.12",
+    "typescript": "^6.0.3",
+    "vite": "^8.2.0",
+    "vitest": "^4.1.10"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "asar": false,
+        "icon": "public/assets/icon"
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {
+            "icon": "public/assets/icon"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {
+            "icon": "public/assets/icon"
+          }
+        }
+      ],
+      "plugins": [
+        {
+          "name": "@electron-forge/plugin-vite",
+          "config": {
+            "build": [
+              {
+                "entry": "main.cjs",
+                "config": "vite.main.config.mjs",
+                "target": "main"
+              },
+              {
+                "entry": "preload.cjs",
+                "config": "vite.preload.config.mjs",
+                "target": "preload"
+              }
+            ],
+            "renderer": [
+              {
+                "name": "main_window",
+                "config": "vite.renderer.config.mjs"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

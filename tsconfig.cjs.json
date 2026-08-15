@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "outDir": "src/main",
+    "rootDir": "src/main",
+    "declaration": false,
+    "sourceMap": false,
+    "removeComments": false,
+    "ignoreDeprecations": "6.0",
+    "types": ["node", "electron"]
+  },
+  "include": ["src/main/*.ts"],
+  "exclude": ["node_modules", "dist", ".vite"]
+}

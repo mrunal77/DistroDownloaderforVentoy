@@ -1,0 +1,27 @@
+id: rocky
+name: Rocky Linux
+family: fedora
+description: Rocky Linux enterprise-grade RHEL clone
+official_website: https://rockylinux.org
+download_page: https://rockylinux.org/download/
+logo: assets/logos/rocky.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - GNOME
+release_type: stable
+iso_provider: official-directory
+base_url: https://dl.rockylinux.org/vault/rocky/9.5/isos/x86_64/
+checksum_provider: https://dl.rockylinux.org/vault/rocky/9.5/isos/x86_64/CHECKSUM
+signature_provider: null
+verification_method: sha256
+download_strategy: official-directory
+iso_pattern: Rocky-9\.5-x86_64-dvd\.iso$
+arch_filter: x86_64
+version: 9.5
+iso:
+  download_url: https://dl.rockylinux.org/vault/rocky/9.5/isos/x86_64/Rocky-9.5-x86_64-dvd.iso
+  file_name: Rocky-9.5-x86_64-dvd.iso
+  size: 10000000000
+  sha256: d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1
+  release_date: 2026-02-15

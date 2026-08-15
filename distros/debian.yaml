@@ -1,0 +1,25 @@
+id: debian
+name: Debian
+family: debian
+description: Debian Live images
+official_website: https://debian.org
+download_page: https://debian.org/CD/live/
+logo: assets/logos/debian.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - GNOME
+release_type: stable
+iso_provider: official-directory
+base_url: https://cdimage.debian.org/debian-cd/current-live/amd64/iso-hybrid/
+checksum_provider: https://cdimage.debian.org/debian-cd/current-live/amd64/iso-hybrid/SHA256SUMS
+verification_method: sha256
+download_strategy: official-directory
+iso_pattern: debian-live-.*amd64-gnome\.iso$
+arch_filter: amd64
+version: 13.6.0
+iso:
+  download_url: https://cdimage.debian.org/debian-cd/current-live/amd64/iso-hybrid/debian-live-13.6.0-amd64-gnome.iso
+  file_name: debian-live-13.6.0-amd64-gnome.iso
+  size: 4200000000
+  release_date: 2026-03-15

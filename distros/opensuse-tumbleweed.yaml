@@ -1,0 +1,29 @@
+id: opensuse-tumbleweed
+name: openSUSE Tumbleweed
+family: suse
+description: openSUSE Tumbleweed rolling release
+official_website: https://opensuse.org
+download_page: https://get.opensuse.org/tumbleweed/
+logo: assets/logos/opensuse.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - GNOME
+  - KDE
+  - XFCE
+release_type: rolling
+iso_provider: official-directory
+base_url: https://download.opensuse.org/tumbleweed/iso/
+checksum_provider: https://download.opensuse.org/tumbleweed/iso/openSUSE-Tumbleweed-DVD-x86_64-Current.iso.sha256
+signature_provider: null
+verification_method: sha256
+download_strategy: official-directory
+iso_pattern: openSUSE-Tumbleweed-DVD-.*x86_64.*\.iso$
+arch_filter: x86_64
+version: Current
+iso:
+  download_url: https://download.opensuse.org/tumbleweed/iso/openSUSE-Tumbleweed-DVD-x86_64-Current.iso
+  file_name: openSUSE-Tumbleweed-DVD-x86_64-Current.iso
+  size: 5000000000
+  sha256: null
+  release_date: 2026-08-14

@@ -1,0 +1,29 @@
+id: manjaro
+name: Manjaro
+family: arch
+description: Manjaro official desktop ISOs
+official_website: https://manjaro.org
+download_page: https://manjaro.org/products/download/x86
+logo: assets/logos/manjaro.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - XFCE
+  - KDE
+  - GNOME
+release_type: rolling
+iso_provider: official-directory
+base_url: https://download.manjaro.org/xfce/26.1.0/
+checksum_provider: null
+signature_provider: null
+verification_method: none
+download_strategy: official-directory
+iso_pattern: manjaro-xfce-26\.1\.0-.*-linux71\.iso$
+arch_filter: x86_64
+version: 26.1.0
+iso:
+  download_url: https://download.manjaro.org/xfce/26.1.0/manjaro-xfce-26.1.0-260812-linux71.iso
+  file_name: manjaro-xfce-26.1.0-260812-linux71.iso
+  size: 3800000000
+  sha256: null
+  release_date: 2026-08-12

@@ -1,0 +1,30 @@
+id: endeavour
+name: EndeavourOS
+family: arch
+description: EndeavourOS official ISO
+official_website: https://endeavouros.com
+download_page: https://endeavouros.com/download/
+logo: assets/logos/endeavouros.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - XFCE
+  - KDE
+  - i3
+  - GNOME
+release_type: rolling
+iso_provider: official-directory
+base_url: https://mirror.rznet.fr/endeavouros/iso/
+checksum_provider: https://mirror.rznet.fr/endeavouros/iso/SHA512SUMS
+signature_provider: null
+verification_method: sha512
+download_strategy: official-directory
+iso_pattern: EndeavourOS_Titan-Neo-.*\.iso$
+arch_filter: x86_64
+version: 2026.04.27
+iso:
+  download_url: https://mirror.rznet.fr/endeavouros/iso/EndeavourOS_Titan-Neo-2026.04.27.iso
+  file_name: EndeavourOS_Titan-Neo-2026.04.27.iso
+  size: 2600000000
+  sha256: null
+  release_date: 2026-04-27

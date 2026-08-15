@@ -1,0 +1,27 @@
+id: solus
+name: Solus
+family: solus
+description: Solus - Independently developed desktop operating system
+official_website: https://getsolus.com
+download_page: https://getsolus.com/download/
+logo: assets/logos/solus.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - Budgie
+  - GNOME
+  - MATE
+release_type: stable
+iso_provider: official-directory
+base_url: https://mirrors.kernel.org/getsolus/iso/
+checksum_provider: null
+verification_method: none
+download_strategy: official-directory
+iso_pattern: Solus-.*-Budgie\.iso$
+arch_filter: x86_64
+version: 4.6
+iso:
+  download_url: https://mirrors.kernel.org/getsolus/iso/Solus-4.6-Budgie.iso
+  file_name: Solus-4.6-Budgie.iso
+  size: 2200000000
+  release_date: 2026-02-15

@@ -1,0 +1,28 @@
+id: ubuntu
+name: Ubuntu
+family: debian
+description: Official Ubuntu desktop ISOs and flavors
+official_website: https://ubuntu.com
+download_page: https://ubuntu.com/download/desktop
+logo: assets/logos/ubuntu.svg
+architectures:
+  - x86_64
+  - arm64
+desktop_environments:
+  - GNOME
+release_type: stable
+iso_provider: official-directory
+base_url: https://releases.ubuntu.com/26.04/
+checksum_provider: https://releases.ubuntu.com/26.04/SHA256SUMS
+signature_provider: https://releases.ubuntu.com/26.04/SHA256SUMS.gpg
+verification_method: sha256
+download_strategy: official-directory
+iso_pattern: ubuntu-26\.04.*desktop.*amd64\.iso$
+arch_filter: amd64
+version: 26.04
+iso:
+  download_url: https://releases.ubuntu.com/26.04/ubuntu-26.04-desktop-amd64.iso
+  file_name: ubuntu-26.04-desktop-amd64.iso
+  size: 5900000000
+  sha256: a4a5c1e1c2f3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e
+  release_date: 2026-04-23

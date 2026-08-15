@@ -1,0 +1,26 @@
+id: kali
+name: Kali Linux
+family: kali
+description: Kali penetration testing distribution
+official_website: https://kali.org
+download_page: https://kali.org/get-kali/
+logo: assets/logos/kali.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - XFCE
+release_type: rolling
+iso_provider: official-directory
+base_url: https://cdimage.kali.org/kali-2026.2/
+checksum_provider: https://cdimage.kali.org/kali-2026.2/SHA256SUMS
+verification_method: sha256
+download_strategy: official-directory
+iso_pattern: kali-linux-.*installer-amd64\.iso$
+arch_filter: amd64
+version: 2026.2
+iso:
+  download_url: https://cdimage.kali.org/kali-2026.2/kali-linux-2026.2-installer-amd64.iso
+  file_name: kali-linux-2026.2-installer-amd64.iso
+  size: 5000000000
+  sha256: 6dbefacc95e3b556c19c48e8bae39b8b505e2d3a1aba0bfb7ab62b036c3d2ba3
+  release_date: 2026-03-12

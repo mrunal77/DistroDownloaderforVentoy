@@ -1,0 +1,24 @@
+id: gentoo
+name: Gentoo
+family: gentoo
+description: Gentoo - Metadistribution with maximum flexibility
+official_website: https://gentoo.org
+download_page: https://gentoo.org/downloads/
+logo: assets/logos/gentoo.svg
+architectures:
+  - x86_64
+desktop_environments: []
+release_type: rolling
+iso_provider: official-directory
+base_url: https://distfiles.gentoo.org/releases/amd64/autobuilds/current-iso/
+checksum_provider: https://distfiles.gentoo.org/releases/amd64/autobuilds/current-iso/SHA256SUMS
+verification_method: sha256
+download_strategy: official-directory
+iso_pattern: install-amd64-minimal-.*\.iso$
+arch_filter: amd64
+version: rolling
+iso:
+  download_url: https://distfiles.gentoo.org/releases/amd64/autobuilds/current-iso/install-amd64-minimal.iso
+  file_name: install-amd64-minimal.iso
+  size: 800000000
+  release_date: 2026-08-01

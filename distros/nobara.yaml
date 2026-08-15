@@ -1,0 +1,26 @@
+id: nobara
+name: Nobara Linux
+family: fedora
+description: Nobara - Fedora-based gaming desktop with NVIDIA and AMD optimizations
+official_website: https://nobaraproject.org
+download_page: https://nobaraproject.org/downloads/
+logo: assets/logos/nobara.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - GNOME
+  - KDE
+release_type: stable
+iso_provider: official-directory
+base_url: https://nobara-images.nobaraproject.org/
+checksum_provider: null
+verification_method: none
+download_strategy: official-directory
+iso_pattern: Nobara-43-Official-.*\.iso$
+arch_filter: x86_64
+version: 43
+iso:
+  download_url: https://nobara-images.nobaraproject.org/Nobara-43-Official-2026-03-28.iso
+  file_name: Nobara-43-Official-2026-03-28.iso
+  size: 2400000000
+  release_date: 2026-03-28

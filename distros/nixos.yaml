@@ -1,0 +1,29 @@
+id: nixos
+name: NixOS
+family: independent
+description: NixOS functional package management OS
+official_website: https://nixos.org
+download_page: https://nixos.org/download/
+logo: assets/logos/nixos.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - GNOME
+  - KDE
+  - XFCE
+release_type: stable
+iso_provider: official-directory
+base_url: https://releases.nixos.org/nixos/
+checksum_provider: null
+signature_provider: null
+verification_method: none
+download_strategy: official-directory
+iso_pattern: nixos-gnome-.*x86_64-linux\.iso$
+arch_filter: x86_64
+version: 25.05
+iso:
+  download_url: https://releases.nixos.org/nixos/25.05/nixos-25.05.4976.3c4b2a1/nixos-gnome-25.05.4976.3c4b2a1-x86_64-linux.iso
+  file_name: nixos-gnome-25.05.4976.3c4b2a1-x86_64-linux.iso
+  size: 3400000000
+  sha256: null
+  release_date: 2026-05-20

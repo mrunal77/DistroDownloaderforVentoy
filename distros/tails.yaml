@@ -1,0 +1,25 @@
+id: tails
+name: Tails
+family: debian
+description: Tails - Privacy-focused live OS that routes traffic through Tor
+official_website: https://tails.net
+download_page: https://tails.net/install/download/
+logo: assets/logos/tails.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - GNOME
+release_type: rolling
+iso_provider: official-directory
+base_url: https://download.tails.net/tails/stable/
+checksum_provider: https://download.tails.net/tails/stable/SHA256SUMS
+verification_method: sha256
+download_strategy: official-directory
+iso_pattern: tails-amd64-.*\.iso$
+arch_filter: amd64
+version: 7.10.1
+iso:
+  download_url: https://download.tails.net/tails/stable/tails-amd64-7.10.1/tails-amd64-7.10.1.iso
+  file_name: tails-amd64-7.10.1.iso
+  size: 1800000000
+  release_date: 2026-08-01

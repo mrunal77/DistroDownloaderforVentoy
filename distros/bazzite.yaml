@@ -1,0 +1,26 @@
+id: bazzite
+name: Bazzite
+family: fedora
+description: Bazzite gaming-focused immutable OS based on Universal Blue
+official_website: https://bazzite.gg
+download_page: https://bazzite.gg/
+logo: assets/logos/bazzite.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - GNOME
+release_type: stable
+iso_provider: official-directory
+base_url: https://github.com/ublue-os/bazzite/releases/latest
+checksum_provider: null
+verification_method: none
+download_strategy: official-directory
+iso_pattern: .*\.iso$
+arch_filter: x86_64
+version: latest
+iso:
+  download_url: https://github.com/ublue-os/bazzite/releases/latest
+  file_name: bazzite-latest-x86_64.iso
+  size: 4000000000
+  sha256: null
+  release_date: 2026-07-01

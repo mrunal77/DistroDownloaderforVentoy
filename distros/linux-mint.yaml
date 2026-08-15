@@ -1,0 +1,20 @@
+id: linux-mint
+name: Linux Mint
+family: debian
+description: Linux Mint official flavors
+official_website: https://linuxmint.com
+download_page: https://linuxmint.com/download/
+logo: assets/logos/linuxmint.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - Cinnamon
+  - XFCE
+release_type: stable
+iso_provider: static
+version: 22.3
+iso:
+  download_url: https://pub.linuxmint.io/stable/22.3/linuxmint-22.3-cinnamon-64bit.iso
+  file_name: linuxmint-22.3-cinnamon-64bit.iso
+  size: 3200000000
+  release_date: 2026-01-10

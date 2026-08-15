@@ -1,0 +1,25 @@
+id: arch
+name: Arch Linux
+family: arch
+description: Arch Linux official ISO
+official_website: https://archlinux.org
+download_page: https://archlinux.org/download/
+logo: assets/logos/arch.svg
+architectures:
+  - x86_64
+desktop_environments: []
+release_type: rolling
+iso_provider: official-directory
+base_url: https://archlinux.mirror.rafal.ca/iso/
+checksum_provider: https://archlinux.mirror.rafal.ca/iso/sha256sums.txt
+verification_method: sha256
+download_strategy: official-directory
+iso_pattern: archlinux-.*-x86_64\.iso$
+arch_filter: x86_64
+version: rolling
+iso:
+  download_url: https://fastly.mirror.pkgbuild.com/iso/2026.08.01/archlinux-2026.08.01-x86_64.iso
+  file_name: archlinux-2026.08.01-x86_64.iso
+  size: 850000000
+  sha256: 4e82dced1c4fd3e498b22a853f8db2a4d262d32b97e7e07d97390d9e425ffe5e
+  release_date: 2026-08-01

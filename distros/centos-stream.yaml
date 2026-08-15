@@ -1,0 +1,27 @@
+id: centos-stream
+name: CentOS Stream
+family: fedora
+description: CentOS Stream upstream RHEL development
+official_website: https://centos.org
+download_page: https://www.centos.org/centos-stream/
+logo: assets/logos/centos.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - GNOME
+release_type: rolling
+iso_provider: official-directory
+base_url: https://mirror.stream.centos.org/10-stream/BaseOS/x86_64/iso/
+checksum_provider: https://mirror.stream.centos.org/10-stream/BaseOS/x86_64/iso/CentOS-Stream-10-latest-x86_64-dvd1.iso.sha256sum
+signature_provider: null
+verification_method: sha256
+download_strategy: official-directory
+iso_pattern: CentOS-Stream-10-.*x86_64-dvd1\.iso$
+arch_filter: x86_64
+version: 10
+iso:
+  download_url: https://mirror.stream.centos.org/10-stream/BaseOS/x86_64/iso/CentOS-Stream-10-latest-x86_64-dvd1.iso
+  file_name: CentOS-Stream-10-latest-x86_64-dvd1.iso
+  size: 10200000000
+  sha256: null
+  release_date: 2026-05-20

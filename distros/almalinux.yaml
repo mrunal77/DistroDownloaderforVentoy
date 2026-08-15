@@ -1,0 +1,27 @@
+id: almalinux
+name: AlmaLinux
+family: fedora
+description: AlmaLinux enterprise-grade RHEL clone
+official_website: https://almalinux.org
+download_page: https://almalinux.org/get-almalinux/
+logo: assets/logos/almalinux.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - GNOME
+release_type: stable
+iso_provider: official-directory
+base_url: https://repo.almalinux.org/almalinux/10/isos/x86_64/
+checksum_provider: https://repo.almalinux.org/almalinux/10/isos/x86_64/CHECKSUM
+signature_provider: null
+verification_method: sha256
+download_strategy: official-directory
+iso_pattern: AlmaLinux-10\.2-x86_64-dvd\.iso$
+arch_filter: x86_64
+version: 10.2
+iso:
+  download_url: https://repo.almalinux.org/almalinux/10/isos/x86_64/AlmaLinux-10.2-x86_64-dvd.iso
+  file_name: AlmaLinux-10.2-x86_64-dvd.iso
+  size: 10000000000
+  sha256: 90244ac532f67c978831a381b420da8bda363729e1f4cf8fb8991daca70ee287
+  release_date: 2026-05-10

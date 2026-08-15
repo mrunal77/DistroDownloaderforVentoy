@@ -1,0 +1,170 @@
+{
+  "Ubuntu": {
+    "id": "ubuntu",
+    "name": "Ubuntu",
+    "logo": "assets/logos/ubuntu.svg",
+    "description": "Official Ubuntu flavors and spins",
+    "distros": [
+      {
+        "id": "ubuntu-desktop",
+        "name": "Ubuntu",
+        "logo": "assets/logos/ubuntu.svg",
+        "desktop": "GNOME",
+        "arch": "x86_64",
+        "architectures": ["x86_64", "arm64"],
+        "size": 5900000000,
+        "downloadUrl": "https://releases.ubuntu.com/26.04/ubuntu-26.04-desktop-amd64.iso",
+        "fileName": "ubuntu-26.04-desktop-amd64.iso",
+        "version": "26.04",
+        "releaseDate": "2026-04-23"
+      },
+      {
+        "id": "ubuntu-kubuntu",
+        "name": "Kubuntu",
+        "logo": "assets/logos/kubuntu.svg",
+        "desktop": "KDE",
+        "arch": "x86_64",
+        "size": 3700000000,
+        "downloadUrl": "https://cdimage.ubuntu.com/kubuntu/releases/26.04/release/kubuntu-26.04-desktop-amd64.iso",
+        "fileName": "kubuntu-26.04-desktop-amd64.iso",
+        "version": "26.04"
+      },
+      {
+        "id": "ubuntu-xfce",
+        "name": "Xubuntu",
+        "logo": "assets/logos/xubuntu.svg",
+        "desktop": "XFCE",
+        "arch": "x86_64",
+        "size": 2300000000,
+        "downloadUrl": "https://cdimage.ubuntu.com/xubuntu/releases/26.04/release/xubuntu-26.04-desktop-amd64.iso",
+        "fileName": "xubuntu-26.04-desktop-amd64.iso",
+        "version": "26.04"
+      }
+    ]
+  },
+  "Fedora": {
+    "id": "fedora",
+    "name": "Fedora",
+    "logo": "assets/logos/fedora.svg",
+    "description": "Fedora Workstation and spins",
+    "distros": [
+      {
+        "id": "fedora-workstation",
+        "name": "Fedora Workstation",
+        "logo": "assets/logos/fedora.svg",
+        "desktop": "GNOME",
+        "arch": "x86_64",
+        "architectures": ["x86_64", "aarch64"],
+        "size": 2400000000,
+        "downloadUrl": "https://download.fedoraproject.org/pub/fedora/linux/releases/44/Workstation/x86_64/iso/Fedora-Workstation-Live-44-1.7.x86_64.iso",
+        "fileName": "Fedora-Workstation-Live-44-1.7.x86_64.iso",
+        "version": "44",
+        "releaseDate": "2026-04-28"
+      },
+      {
+        "id": "fedora-kde",
+        "name": "Fedora KDE",
+        "logo": "assets/logos/fedora-kde.svg",
+        "desktop": "KDE",
+        "arch": "x86_64",
+        "size": 2800000000,
+        "downloadUrl": "https://download.fedoraproject.org/pub/fedora/linux/releases/44/Spins/x86_64/iso/Fedora-KDE-Live-44-1.7.x86_64.iso",
+        "fileName": "Fedora-KDE-Live-44-1.7.x86_64.iso",
+        "version": "44"
+      }
+    ]
+  },
+  "Linux Mint": {
+    "id": "linux-mint",
+    "name": "Linux Mint",
+    "logo": "assets/logos/linuxmint.svg",
+    "description": "Linux Mint official flavors",
+    "distros": [
+      {
+        "id": "mint-cinnamon",
+        "name": "Linux Mint (Cinnamon)",
+        "logo": "assets/logos/mint-cinnamon.svg",
+        "desktop": "Cinnamon",
+        "arch": "x86_64",
+        "size": 3200000000,
+        "downloadUrl": "https://pub.linuxmint.io/stable/22.3/linuxmint-22.3-cinnamon-64bit.iso",
+        "fileName": "linuxmint-22.3-cinnamon-64bit.iso",
+        "version": "22.3",
+        "releaseDate": "2026-01-10"
+      },
+      {
+        "id": "mint-xfce",
+        "name": "Linux Mint (Xfce)",
+        "logo": "assets/logos/mint-xfce.svg",
+        "desktop": "XFCE",
+        "arch": "x86_64",
+        "size": 3000000000,
+        "downloadUrl": "https://pub.linuxmint.io/stable/22.3/linuxmint-22.3-xfce-64bit.iso",
+        "fileName": "linuxmint-22.3-xfce-64bit.iso",
+        "version": "22.3"
+      }
+    ]
+  },
+  "Debian": {
+    "id": "debian",
+    "name": "Debian",
+    "logo": "assets/logos/debian.svg",
+    "description": "Debian Live images",
+    "distros": [
+      {
+        "id": "debian-gnome",
+        "name": "Debian (GNOME)",
+        "logo": "assets/logos/debian.svg",
+        "desktop": "GNOME",
+        "arch": "x86_64",
+        "size": 4200000000,
+        "downloadUrl": "https://cdimage.debian.org/debian-cd/current-live/amd64/iso-hybrid/debian-live-13.6.0-amd64-gnome.iso",
+        "fileName": "debian-live-13.6.0-amd64-gnome.iso",
+        "version": "13.6.0",
+        "releaseDate": "2026-03-15"
+      }
+    ]
+  },
+  "Arch": {
+    "id": "arch",
+    "name": "Arch Linux",
+    "logo": "assets/logos/arch.svg",
+    "description": "Arch Linux official ISO",
+    "distros": [
+      {
+        "id": "arch-linux",
+        "name": "Arch Linux",
+        "logo": "assets/logos/arch.svg",
+        "desktop": "None",
+        "arch": "x86_64",
+        "size": 850000000,
+        "downloadUrl": "https://fastly.mirror.pkgbuild.com/iso/2026.08.01/archlinux-2026.08.01-x86_64.iso",
+        "fileName": "archlinux-2026.08.01-x86_64.iso",
+        "version": "2026.08.01",
+        "releaseDate": "2026-08-01",
+        "sha256": "4e82dced1c4fd3e498b22a853f8db2a4d262d32b97e7e07d97390d9e425ffe5e"
+      }
+    ]
+  },
+  "Kali": {
+    "id": "kali",
+    "name": "Kali Linux",
+    "logo": "assets/logos/kali.svg",
+    "description": "Kali penetration testing distribution",
+    "distros": [
+      {
+        "id": "kali-gui",
+        "name": "Kali Linux (XFCE)",
+        "logo": "assets/logos/kali.svg",
+        "desktop": "XFCE",
+        "arch": "x86_64",
+        "size": 5000000000,
+        "downloadUrl": "https://cdimage.kali.org/kali-2026.2/kali-linux-2026.2-installer-amd64.iso",
+        "fileName": "kali-linux-2026.2-installer-amd64.iso",
+        "version": "2026.2",
+        "releaseDate": "2026-03-12",
+        "sha256": "6dbefacc95e3b556c19c48e8bae39b8b505e2d3a1aba0bfb7ab62b036c3d2ba3"
+      }
+    ]
+  }
+}

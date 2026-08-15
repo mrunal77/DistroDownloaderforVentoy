@@ -1,0 +1,28 @@
+id: fedora
+name: Fedora
+family: fedora
+description: Fedora Workstation official live ISOs
+official_website: https://fedoraproject.org
+download_page: https://fedoraproject.org/workstation/download/
+logo: assets/logos/fedora.svg
+architectures:
+  - x86_64
+  - aarch64
+desktop_environments:
+  - GNOME
+release_type: stable
+iso_provider: official-directory
+base_url: https://download.fedoraproject.org/pub/fedora/linux/releases/44/Workstation/x86_64/iso/
+checksum_provider: https://dl.fedoraproject.org/pub/fedora/linux/releases/44/Workstation/x86_64/iso/Fedora-Workstation-44-x86_64-CHECKSUM
+signature_provider: null
+verification_method: sha256
+download_strategy: official-directory
+iso_pattern: Fedora-Workstation-Live-44.*x86_64\.iso$
+arch_filter: x86_64
+version: 44
+iso:
+  download_url: https://download.fedoraproject.org/pub/fedora/linux/releases/44/Workstation/x86_64/iso/Fedora-Workstation-Live-44-1.7.x86_64.iso
+  file_name: Fedora-Workstation-Live-44-1.7.x86_64.iso
+  size: 2200000000
+  sha256: 1620295f6a00c27c3208f0c00b8ece4eab1ec69b9002152d97488bf26a426ddf
+  release_date: 2026-04-28

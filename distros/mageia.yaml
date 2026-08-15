@@ -1,0 +1,29 @@
+id: mageia
+name: Mageia
+family: independent
+description: Mageia community-driven distribution
+official_website: https://mageia.org
+download_page: https://mageia.org/download/
+logo: assets/logos/mageia.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - Plasma
+  - XFCE
+  - GNOME
+release_type: stable
+iso_provider: official-directory
+base_url: https://mirrors.kernel.org/mageia/distrib/10/x86_64/iso/
+checksum_provider: null
+signature_provider: null
+verification_method: none
+download_strategy: official-directory
+iso_pattern: Mageia-10.*x86_64.*DVD\.iso$
+arch_filter: x86_64
+version: 10
+iso:
+  download_url: https://mirrors.kernel.org/mageia/distrib/10/x86_64/iso/Mageia-10-x86_64-DVD.iso
+  file_name: Mageia-10-x86_64-DVD.iso
+  size: 4200000000
+  sha256: null
+  release_date: 2026-04-05

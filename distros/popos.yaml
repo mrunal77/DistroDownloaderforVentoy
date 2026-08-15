@@ -1,0 +1,26 @@
+id: popos
+name: Pop!_OS
+family: ubuntu
+description: Pop!_OS - Ubuntu-based distro for productivity and customization
+official_website: https://pop.system76.com
+download_page: https://system76.com/pop/
+logo: assets/logos/popos.svg
+architectures:
+  - x86_64
+  - arm64
+desktop_environments:
+  - GNOME
+release_type: stable
+iso_provider: official-directory
+base_url: https://download.system76.com/pop-os/release/24.04/
+checksum_provider: null
+verification_method: none
+download_strategy: official-directory
+iso_pattern: pop-os_.*amd64.*\.iso$
+arch_filter: amd64
+version: 24.04
+iso:
+  download_url: https://download.system76.com/pop-os/release/24.04/pop-os_24.04_amd64_intel.iso
+  file_name: pop-os_24.04_amd64_intel.iso
+  size: 2800000000
+  release_date: 2026-03-10

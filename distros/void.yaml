@@ -1,0 +1,29 @@
+id: void
+name: Void Linux
+family: independent
+description: Void Linux independent rolling release
+official_website: https://voidlinux.org
+download_page: https://voidlinux.org/download/
+logo: assets/logos/void.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - XFCE
+  - MATE
+  - Cinnamon
+release_type: rolling
+iso_provider: official-directory
+base_url: https://alpha.de.repo.voidlinux.org/live/
+checksum_provider: https://alpha.de.repo.voidlinux.org/live/void-live-x86_64-20260501.iso.sha256
+signature_provider: null
+verification_method: sha256
+download_strategy: official-directory
+iso_pattern: void-live-x86_64-.*-xfce\.iso$
+arch_filter: x86_64
+version: 20260501
+iso:
+  download_url: https://alpha.de.repo.voidlinux.org/live/void-live-x86_64-20260501-xfce.iso
+  file_name: void-live-x86_64-20260501-xfce.iso
+  size: 900000000
+  sha256: null
+  release_date: 2026-05-01

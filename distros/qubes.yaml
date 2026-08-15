@@ -1,0 +1,28 @@
+id: qubes
+name: Qubes OS
+family: security
+description: Qubes OS security through isolation
+official_website: https://qubes-os.org
+download_page: https://qubes-os.org/downloads/
+logo: assets/logos/qubes.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - XFCE
+  - GNOME
+release_type: stable
+iso_provider: official-directory
+base_url: https://mirrors.edge.kernel.org/qubes/iso/
+checksum_provider: null
+signature_provider: null
+verification_method: none
+download_strategy: official-directory
+iso_pattern: Qubes-R4\..*-x86_64\.iso$
+arch_filter: x86_64
+version: 4.3
+iso:
+  download_url: https://mirrors.edge.kernel.org/qubes/iso/Qubes-R4.3.2-x86_64.iso
+  file_name: Qubes-R4.3.2-x86_64.iso
+  size: 6000000000
+  sha256: null
+  release_date: 2026-01-15

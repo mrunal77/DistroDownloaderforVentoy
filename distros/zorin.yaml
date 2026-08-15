@@ -1,0 +1,27 @@
+id: zorin
+name: Zorin OS
+family: ubuntu
+description: Zorin OS Core - Ubuntu-based desktop for Windows/macOS switchers
+official_website: https://zorin.com
+download_page: https://zorin.com/os/download/
+logo: assets/logos/zorin.svg
+architectures:
+  - x86_64
+  - arm64
+desktop_environments:
+  - GNOME
+  - XFCE
+release_type: stable
+iso_provider: official-directory
+base_url: https://zorinos.com/os/download/18/core/
+checksum_provider: null
+verification_method: none
+download_strategy: official-directory
+iso_pattern: .*\.iso$
+arch_filter: amd64
+version: 18.1
+iso:
+  download_url: https://download.zorinos.com/zorin-os/18/core/zorin-core-18.1.5-amd64.iso
+  file_name: zorin-core-18.1.5-amd64.iso
+  size: 3500000000
+  release_date: 2026-03-15

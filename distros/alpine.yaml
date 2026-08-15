@@ -1,0 +1,29 @@
+id: alpine
+name: Alpine Linux
+family: independent
+description: Alpine Linux security-oriented lightweight distro
+official_website: https://alpinelinux.org
+download_page: https://alpinelinux.org/downloads/
+logo: assets/logos/alpine.svg
+architectures:
+  - x86_64
+desktop_environments:
+  - XFCE
+  - GNOME
+  - KDE
+release_type: stable
+iso_provider: official-directory
+base_url: https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/x86_64/
+checksum_provider: https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/x86_64/alpine-virt-3.22.0-x86_64.iso.sha256
+signature_provider: null
+verification_method: sha256
+download_strategy: official-directory
+iso_pattern: alpine-xfce-.*x86_64\.iso$
+arch_filter: x86_64
+version: 3.22.0
+iso:
+  download_url: https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/x86_64/alpine-xfce-3.22.0-x86_64.iso
+  file_name: alpine-xfce-3.22.0-x86_64.iso
+  size: 1000000000
+  sha256: null
+  release_date: 2026-05-15
