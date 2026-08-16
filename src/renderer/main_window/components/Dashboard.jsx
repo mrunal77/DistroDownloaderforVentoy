@@ -37,7 +37,14 @@ export default function Dashboard ({ catalog, search, setSearch, selectedCategor
     })
   })
 
-  const filtered = allDistros.filter(d => matchesSearch(d) && matchesCategory(d) && matchesArch(d))
+  const filtered = allDistros
+    .filter(d => matchesSearch(d) && matchesCategory(d) && matchesArch(d))
+    .sort((a, b) => {
+      if (sortBy === 'name') return (a.name || '').localeCompare(b.name || '')
+      if (sortBy === 'size') return (a.iso?.size || a.size || 0) - (b.iso?.size || b.size || 0)
+      if (sortBy === 'date') return String(b.iso?.release_date || b.release_date || '').localeCompare(String(a.iso?.release_date || a.release_date || ''))
+      return 0
+    })
 
   return (
     <div>

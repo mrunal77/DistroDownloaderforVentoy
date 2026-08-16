@@ -144,12 +144,12 @@ function loadCatalog() {
     return bundled;
 }
 function isDuplicateOf(a, b) {
-    const aUrl = (a.iso && a.iso.download_url) || a.downloadUrl || a.download_url;
-    const bUrl = (b.iso && b.iso.download_url) || b.downloadUrl || b.download_url;
+    const aUrl = a.iso?.download_url || a.downloadUrl || a.download_url;
+    const bUrl = b.iso?.download_url || b.downloadUrl || b.download_url;
     if (aUrl && bUrl && aUrl === bUrl)
         return true;
-    const aFile = (a.iso && a.iso.file_name) || a.fileName || a.file_name;
-    const bFile = (b.iso && b.iso.file_name) || b.fileName || b.file_name;
+    const aFile = a.iso?.file_name || a.fileName || a.file_name;
+    const bFile = b.iso?.file_name || b.fileName || b.file_name;
     if (aFile && bFile && aFile === bFile)
         return true;
     const aName = a.name || a.id;

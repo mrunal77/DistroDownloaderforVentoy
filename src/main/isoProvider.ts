@@ -10,7 +10,7 @@ import crypto from 'crypto'
 
 interface IsoProviderConfig {
   name?: string
-  iso?: { downloadUrl?: string; size?: number; sha256?: string; releaseDate?: string }
+  iso?: { downloadUrl?: string; download_url?: string; fileName?: string; file_name?: string; size?: number; sha256?: string; releaseDate?: string; release_date?: string }
   apiUrl?: string
   transform?: (data: Record<string, unknown>) => Record<string, unknown>
   repo?: string
@@ -94,15 +94,20 @@ class IsoProvider {
     try {
       const hash = crypto.createHash(algorithm)
       const fd = await fs.promises.open(filePath, 'r')
-      const chunkSize = 4 * 1024 * 1024
-      let offset = 0
-      const { size } = await fd.stat()
-      while (offset < size) {
-        const { buffer } = await fd.read({ buffer: Buffer.alloc(chunkSize), offset, length: chunkSize })
-        hash.update(buffer.slice(0, buffer.length))
-        offset += buffer.length
+      try {
+        const chunkSize = 4 * 1024 * 1024
+        let position = 0
+        const { size } = await fd.stat()
+        while (position < size) {
+          const buffer = Buffer.allocUnsafe(Math.min(chunkSize, size - position))
+          const { bytesRead } = await fd.read(buffer, 0, buffer.length, position)
+          if (bytesRead === 0) break
+          hash.update(buffer.subarray(0, bytesRead))
+          position += bytesRead
+        }
+      } finally {
+        await fd.close()
       }
-      await fd.close()
       const actual = hash.digest('hex').toLowerCase()
       return actual === expectedChecksum.toLowerCase()
     } catch {
@@ -112,7 +117,7 @@ class IsoProvider {
 }
 
 class StaticProvider extends IsoProvider {
-  iso: { downloadUrl?: string; size?: number; sha256?: string; releaseDate?: string } | null
+  iso: IsoProviderConfig['iso'] | null
 
   constructor (config: IsoProviderConfig = {}) {
     super(config)
@@ -125,11 +130,11 @@ class StaticProvider extends IsoProvider {
       distro: this.config.name || 'Unknown',
       version: this.config.version || 'latest',
       architecture: this.config.arch || 'x86_64',
-      iso_name: path.basename(this.iso.downloadUrl || ''),
-      download_url: this.iso.downloadUrl || '',
+      iso_name: this.iso.fileName || this.iso.file_name || path.basename(this.iso.downloadUrl || this.iso.download_url || ''),
+      download_url: this.iso.downloadUrl || this.iso.download_url || '',
       size: this.iso.size || null,
       sha256: this.iso.sha256 || null,
-      release_date: this.iso.releaseDate || null,
+      release_date: this.iso.releaseDate || this.iso.release_date || null,
       source: 'static',
       official_website: this.config.officialWebsite || null
     }
@@ -297,7 +302,7 @@ class MirrorProvider extends IsoProvider {
 function fetchJson (url: string): Promise<Record<string, unknown>> {
   return new Promise((resolve, reject) => {
     const client = url.startsWith('https') ? https : http
-    const req = client.get(url, { timeout: 30000 }, (res) => {
+    const req = client.get(url, { timeout: 30000, headers: { 'User-Agent': 'VentoyLinuxDistroDownloader/0.3.0' } }, (res) => {
       if (res.statusCode && res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
         fetchJson(res.headers.location).then(resolve, reject)
         return
@@ -328,7 +333,7 @@ function fetchJson (url: string): Promise<Record<string, unknown>> {
 function fetchText (url: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const client = url.startsWith('https') ? https : http
-    const req = client.get(url, { timeout: 30000 }, (res) => {
+    const req = client.get(url, { timeout: 30000, headers: { 'User-Agent': 'VentoyLinuxDistroDownloader/0.3.0' } }, (res) => {
       if (res.statusCode && res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
         fetchText(res.headers.location).then(resolve, reject)
         return

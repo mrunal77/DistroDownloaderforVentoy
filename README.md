@@ -193,7 +193,7 @@ Ensure you're running on a system with a display server (Wayland/X11). Headless 
 vaInitialize failed: unknown libva error
 ```
 
-This is a harmless Chromium GPU warning on systems without VA-API. The app disables hardware acceleration automatically.
+This means the system VA-API driver could not initialize. The app enables hardware acceleration where the installed graphics stack supports it and otherwise Chromium falls back safely.
 
 ### Permission denied on USB drives
 

@@ -1,5 +1,6 @@
 /* src/main/downloadManager.ts
- * Download manager with temp file, atomic rename, resume support, retry, and checksum verification.
+ * Download manager with temp file, atomic rename, resume support, retry, checksum verification,
+ * and a concurrent download queue with configurable concurrency.
  */
 
 import fs from 'fs'
@@ -19,6 +20,7 @@ interface DownloadInfo {
   aborted: boolean
   signal: AbortSignal
   controller: AbortController
+  enqueuedAt: number
 }
 
 interface DownloadProgress {
@@ -33,6 +35,7 @@ interface DownloadCallbacks {
   onProgress?: (progress: DownloadProgress & { downloadId: string }) => void
   onComplete?: (result: DownloadResult & { downloadId: string }) => void
   onError?: (error: { downloadId: string; message: string }) => void
+  onQueueChange?: (state: QueueState) => void
 }
 
 interface DownloadOptions {
@@ -56,6 +59,195 @@ interface DownloadConfig {
   options?: DownloadOptions
 }
 
+interface QueuedDownload {
+  config: DownloadConfig
+  callbacks: DownloadCallbacks
+}
+
+interface QueueState {
+  concurrency: number
+  active: number
+  queued: number
+  total: number
+}
+
+type QueueListener = (state: QueueState) => void
+
+class DownloadQueue {
+  private concurrency: number
+  private running = new Set<string>()
+  private pending: QueuedDownload[] = []
+  private onQueueChange?: (state: QueueState) => void
+  private listeners: QueueListener[] = []
+
+  constructor (concurrency: number = 2) {
+    this.concurrency = Math.max(1, concurrency)
+  }
+
+  setConcurrency (n: number): void {
+    this.concurrency = Math.max(1, n)
+    this.notify()
+    this.pump()
+  }
+
+  getConcurrency (): number {
+    return this.concurrency
+  }
+
+  add (config: DownloadConfig, callbacks: DownloadCallbacks = {}): string {
+    const downloadId = config.downloadId || crypto.randomUUID()
+    const merged: DownloadConfig = { ...config, downloadId }
+    this.pending.push({ config: merged, callbacks })
+    if (callbacks.onQueueChange) this.onQueueChange = callbacks.onQueueChange
+    this.notify()
+    this.pump()
+    return downloadId
+  }
+
+  cancel (downloadId: string): boolean {
+    const info = activeDownloads.get(downloadId)
+    if (info) {
+      info.aborted = true
+      if (info.controller) info.controller.abort()
+      return true
+    }
+    const idx = this.pending.findIndex(job => job.config.downloadId === downloadId)
+    if (idx >= 0) {
+      this.pending.splice(idx, 1)
+      this.notify()
+      return true
+    }
+    return false
+  }
+
+  getState (): QueueState {
+    return {
+      concurrency: this.concurrency,
+      active: this.running.size,
+      queued: this.pending.length,
+      total: this.running.size + this.pending.length
+    }
+  }
+
+  subscribe (listener: QueueListener): () => void {
+    this.listeners.push(listener)
+    return () => {
+      this.listeners = this.listeners.filter(l => l !== listener)
+    }
+  }
+
+  private notify (): void {
+    const state = this.getState()
+    for (const l of this.listeners) {
+      try { l(state) } catch { /* ignore */ }
+    }
+    if (this.onQueueChange) {
+      try { this.onQueueChange(state) } catch { /* ignore */ }
+    }
+  }
+
+  private async pump (): Promise<void> {
+    while (this.running.size < this.concurrency && this.pending.length > 0) {
+      const job = this.pending.shift()!
+      const { config } = job
+      const id = config.downloadId!
+      this.running.add(id)
+      this.execute(config, job.callbacks).finally(() => {
+        this.running.delete(id)
+        this.notify()
+        this.pump()
+      })
+    }
+    this.notify()
+  }
+
+  private async execute (config: DownloadConfig, callbacks: DownloadCallbacks): Promise<void> {
+    const {
+      downloadId,
+      downloadUrl,
+      fileName,
+      targetMountPath,
+      options = {}
+    } = config
+
+    const { onProgress, onComplete, onError } = callbacks
+    const controller = new AbortController()
+    const signal = controller.signal
+
+    if (!targetMountPath || !fs.existsSync(targetMountPath)) {
+      const msg = 'Target mount path does not exist'
+      if (onError) onError({ downloadId: downloadId!, message: msg })
+      return
+    }
+
+    const info: DownloadInfo = {
+      downloadId: downloadId!,
+      downloadUrl,
+      fileName,
+      targetMountPath,
+      aborted: false,
+      signal,
+      controller,
+      enqueuedAt: Date.now()
+    }
+    activeDownloads.set(downloadId!, info)
+    logDownload('Download started', {
+      downloadId: downloadId!,
+      url: downloadUrl,
+      target: path.join(targetMountPath, fileName)
+    })
+
+    try {
+      const result = await downloadWithRetry(downloadUrl, targetMountPath, fileName, {
+        ...options,
+        signal,
+        onProgress: (progress) => {
+          if (onProgress) onProgress({ ...progress, downloadId: downloadId! })
+        }
+      })
+      if (onComplete) onComplete({ downloadId: downloadId!, ...result })
+      activeDownloads.delete(downloadId!)
+    } catch (err) {
+      const message = err && (err as Error).message ? (err as Error).message : 'Download failed'
+      if (onError) onError({ downloadId: downloadId!, message })
+      activeDownloads.delete(downloadId!)
+    }
+  }
+}
+
+const queues = new Map<string, DownloadQueue>()
+
+export function getQueue (id: string = 'default', concurrency: number = 2): DownloadQueue {
+  let q = queues.get(id)
+  if (!q) {
+    q = new DownloadQueue(concurrency)
+    queues.set(id, q)
+  }
+  return q
+}
+
+export function setQueueConcurrency (id: string, concurrency: number): void {
+  getQueue(id, concurrency).setConcurrency(concurrency)
+}
+
+export function getQueueState (id: string = 'default'): QueueState {
+  const q = queues.get(id)
+  return q ? q.getState() : { concurrency: 2, active: 0, queued: 0, total: 0 }
+}
+
+export function cancelDownload (downloadId: string): boolean {
+  for (const q of queues.values()) {
+    if (q.cancel(downloadId)) return true
+  }
+  const info = activeDownloads.get(downloadId)
+  if (info) {
+    info.aborted = true
+    if (info.controller) info.controller.abort()
+    return true
+  }
+  return false
+}
+
 export async function downloadWithRetry (url: string, targetDir: string, fileName: string, options: DownloadOptions = {}): Promise<DownloadResult> {
   const { maxRetries = 3, timeout = 0, signal = null, onProgress = null } = options
   const targetPath = path.join(targetDir, fileName)
@@ -66,7 +258,7 @@ export async function downloadWithRetry (url: string, targetDir: string, fileNam
     try {
       const result = await streamDownload(url, tempPath, { timeout, signal, onProgress })
       if (options.expectedSha256) {
-        const valid: boolean | null = IsoProvider.prototype.verifyChecksum(tempPath, options.expectedSha256, 'sha256') as unknown as boolean | null
+        const valid = await IsoProvider.prototype.verifyChecksum(tempPath, options.expectedSha256, 'sha256')
         if (valid === false) {
           throw new Error('Checksum verification failed')
         }
@@ -82,6 +274,7 @@ export async function downloadWithRetry (url: string, targetDir: string, fileNam
     } catch (err) {
       lastError = err as Error
       try { fs.unlinkSync(tempPath) } catch { /* ignore */ }
+      if (signal?.aborted) throw lastError
       if (attempt < maxRetries - 1) {
         const delay = Math.pow(2, attempt) * 1000
         logWarn('Download retry', { attempt: attempt + 1, delay, error: (err as Error).message })
@@ -109,7 +302,6 @@ async function streamDownload (url: string, targetPath: string, options: Downloa
     writeStream.on('open', resolve)
     writeStream.on('error', reject)
   })
-  try { await fs.promises.open(targetPath, 'r+') } catch { /* ignore */ }
   const stream = response.data
   let lastProgressSentAt = 0
   const progressIntervalMs = 500
@@ -138,53 +330,25 @@ async function streamDownload (url: string, targetPath: string, options: Downloa
       })
     }
   }
-  await new Promise<void>(resolve => writeStream.end(resolve))
+  await new Promise<void>((resolve, reject) => {
+    writeStream.once('error', reject)
+    writeStream.end(resolve)
+  })
   const sha256 = hash.digest('hex')
+  if (onProgress) {
+    const elapsed = Math.max((Date.now() - startTime) / 1000, 0.001)
+    onProgress({
+      transferredBytes: transferred,
+      totalBytes,
+      percentage: totalBytes ? 100 : null,
+      downloadSpeedBytesPerSec: Math.round(transferred / elapsed),
+      etaSeconds: totalBytes ? 0 : null
+    })
+  }
   return { sha256, totalBytes: transferred }
 }
 
-export async function startDownload (config: DownloadConfig, callbacks: DownloadCallbacks = {}): Promise<DownloadResult> {
-  const {
-    downloadId: rawDownloadId,
-    downloadUrl,
-    fileName,
-    targetMountPath,
-    options = {}
-  } = config
-
-  const downloadId = rawDownloadId || crypto.randomUUID()
-  const { onProgress, onComplete, onError } = callbacks
-  const controller = new AbortController()
-  const signal = controller.signal
-
-  if (!targetMountPath || !fs.existsSync(targetMountPath)) {
-    throw new Error('Target mount path does not exist')
-  }
-  const info: DownloadInfo = { downloadId, downloadUrl, fileName, targetMountPath, aborted: false, signal, controller }
-  activeDownloads.set(downloadId, info)
-  logDownload('Download started', { downloadId, url: downloadUrl, target: path.join(targetMountPath, fileName) })
-  try {
-    const result = await downloadWithRetry(downloadUrl, targetMountPath, fileName, {
-      ...options,
-      signal,
-      onProgress: (progress) => {
-        if (onProgress) onProgress({ ...progress, downloadId })
-      }
-    })
-    if (onComplete) onComplete({ downloadId, ...result })
-    activeDownloads.delete(downloadId)
-    return result
-  } catch {
-    if (onError) onError({ downloadId, message: 'Download failed' })
-    activeDownloads.delete(downloadId)
-    throw new Error('Download failed')
-  }
-}
-
-export function cancelDownload (downloadId: string): boolean {
-  const info = activeDownloads.get(downloadId)
-  if (!info) return false
-  info.aborted = true
-  if (info.controller) info.controller.abort()
-  return true
+export function startDownload (config: DownloadConfig, callbacks: DownloadCallbacks = {}): string {
+  const q = getQueue('default', 2)
+  return q.add(config, callbacks)
 }

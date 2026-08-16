@@ -124,7 +124,9 @@ function detectPhysicalUsbDisks() {
         const isUsb = tran === 'usb' || idBus === 'usb';
         const removable = sysRem === true || sysRem === null && (dev.rm === true || dev.rm === '1');
         const readOnly = sysRo === true || sysRo === null && (dev.ro === true || dev.ro === '1');
-        if (!isUsb || !removable || readOnly)
+        // USB-attached SSDs often report RM=0. USB transport is the reliable
+        // indicator; read-only devices remain excluded.
+        if (!isUsb || readOnly)
             continue;
         const size = parseSizeBytes(dev.size);
         const stable = getStableId(udevProps);
@@ -149,7 +151,7 @@ function detectPhysicalUsbDisks() {
             serial: dev.serial || udevProps.ID_SERIAL_SHORT || null,
             size,
             transport: dev.tran || idBus || 'usb',
-            removable: true,
+            removable,
             partitions,
             mountPoints: getMountpoints(dev.mountpoints),
             isVentoy: false,
@@ -209,19 +211,19 @@ function detectVentoyOnDrive(drive) {
         rawMeta = null;
     }
     let confidence = 'none';
-    if (rawMeta && rawMeta.verified && partitionStructureOk && hasVentoyLabel) {
+    if (rawMeta?.verified && partitionStructureOk && hasVentoyLabel) {
         confidence = 'high';
     }
     else if (metadataVerified && partitionStructureOk && hasVentoyLabel) {
         confidence = 'high';
     }
-    else if (rawMeta && rawMeta.verified && partitionStructureOk) {
+    else if (rawMeta?.verified && partitionStructureOk) {
         confidence = 'high';
     }
     else if (partitionStructureOk && (hasVentoyLabel || hasVtoyefiLabel)) {
         confidence = 'medium';
     }
-    else if (rawMeta && rawMeta.verified && (hasVentoyLabel || hasVtoyefiLabel)) {
+    else if (rawMeta?.verified && (hasVentoyLabel || hasVtoyefiLabel)) {
         confidence = 'medium';
     }
     else if (hasVentoyLabel || hasVtoyefiLabel || hasVentoyPartLabel || hasVtoyefiPartLabel) {
@@ -237,9 +239,9 @@ function detectVentoyOnDrive(drive) {
     drive.ventoyBootPath = mountedEfi;
     drive.ventoyDataPartition = dataPart ? dataPart.device : null;
     drive.ventoyBootPartition = efiPart ? efiPart.device : null;
-    drive.ventoyMetadataVerified = rawMeta === null || rawMeta === void 0 ? void 0 : rawMeta.verified;
-    drive.ventoyMetadataReason = rawMeta === null || rawMeta === void 0 ? void 0 : rawMeta.reason;
-    drive.ventoyRawSignatureValid = !!(rawMeta === null || rawMeta === void 0 ? void 0 : (rawMeta.mbrSignature || rawMeta.stage2Signature));
+    drive.ventoyMetadataVerified = rawMeta?.verified ?? metadataVerified;
+    drive.ventoyMetadataReason = rawMeta?.reason || '';
+    drive.ventoyRawSignatureValid = rawMeta?.mbrSignature || rawMeta?.stage2Signature || false;
     return drive;
 }
 function getStorageInfo(mountPath) {

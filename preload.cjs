@@ -28,6 +28,8 @@ contextBridge.exposeInMainWorld('ventoy', {
   startDownload: (distroId, targetMountPath) => ipcRenderer.invoke('start-download', { distroId, targetMountPath }),
   cancelDownload: (downloadId) => ipcRenderer.invoke('cancel-download', downloadId),
   checkDownloadSpace: (distroId, targetMountPath) => ipcRenderer.invoke('check-download-space', { distroId, targetMountPath }),
+  getQueueState: () => ipcRenderer.invoke('get-queue-state'),
+  setDownloadConcurrency: (concurrency) => ipcRenderer.invoke('set-download-concurrency', concurrency),
   verifyIso: (filePath) => ipcRenderer.invoke('verify-iso', filePath),
   scanVentoy: (mountPath) => ipcRenderer.invoke('scan-ventoy', mountPath),
   deleteIso: (mountPath, isoName) => ipcRenderer.invoke('delete-iso', { mountPath, isoName }),
@@ -57,6 +59,11 @@ contextBridge.exposeInMainWorld('ventoy', {
     const listener = (event, payload) => cb(payload)
     ipcRenderer.on('download-error', listener)
     return () => ipcRenderer.removeListener('download-error', listener)
+  },
+  onQueueState: (cb) => {
+    const listener = (event, payload) => cb(payload)
+    ipcRenderer.on('queue-state', listener)
+    return () => ipcRenderer.removeListener('queue-state', listener)
   },
   onDevicesChanged: (cb) => {
     const listener = (event, data) => cb(data)

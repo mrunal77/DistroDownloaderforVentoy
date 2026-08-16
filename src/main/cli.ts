@@ -26,7 +26,13 @@ interface DistroRecord {
   base_url?: string
   checksum_provider?: string
   version?: string
-  iso?: { downloadUrl?: string; size?: number; sha256?: string; releaseDate?: string }
+  iso?: { downloadUrl?: string; download_url?: string; fileName?: string; file_name?: string; size?: number; sha256?: string; releaseDate?: string; release_date?: string }
+  downloadUrl?: string
+  download_url?: string
+  size?: number
+  sha256?: string
+  releaseDate?: string
+  release_date?: string
   architectures?: string[]
   official_website?: string
   distros?: DistroRecord[]
@@ -339,11 +345,17 @@ function createProvider (distro: DistroRecord): IsoProvider {
       checksumPattern: distro.checksum_provider ? new RegExp(distro.checksum_provider as string) : null
     })
   }
+  const iso = distro.iso || {
+    downloadUrl: distro.downloadUrl || distro.download_url,
+    size: distro.size,
+    sha256: distro.sha256,
+    releaseDate: distro.releaseDate || distro.release_date
+  }
   return new StaticProvider({
     name: distro.name,
     version: distro.version,
     arch: distro.architectures && distro.architectures[0],
-    iso: distro.iso,
+    iso,
     officialWebsite: distro.official_website
   })
 }

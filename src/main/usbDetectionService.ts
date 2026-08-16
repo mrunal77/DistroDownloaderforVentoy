@@ -192,7 +192,9 @@ export function detectPhysicalUsbDisks (): UsbDrive[] {
     const removable = sysRem === true || sysRem === null && (dev.rm === true || dev.rm === '1')
     const readOnly = sysRo === true || sysRo === null && (dev.ro === true || dev.ro === '1')
 
-    if (!isUsb || !removable || readOnly) continue
+    // USB-attached SSDs often report RM=0. USB transport is the reliable
+    // indicator; read-only devices remain excluded.
+    if (!isUsb || readOnly) continue
 
     const size = parseSizeBytes(dev.size)
     const stable = getStableId(udevProps)
@@ -218,7 +220,7 @@ export function detectPhysicalUsbDisks (): UsbDrive[] {
       serial: dev.serial || udevProps.ID_SERIAL_SHORT || null,
       size,
       transport: dev.tran || idBus || 'usb',
-      removable: true,
+      removable,
       partitions,
       mountPoints: getMountpoints(dev.mountpoints),
       isVentoy: false,

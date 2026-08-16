@@ -3,6 +3,10 @@
  */
 
 import { describe, it, expect } from 'vitest'
+import crypto from 'crypto'
+import fs from 'fs'
+import os from 'os'
+import path from 'path'
 import * as isoProvider from '../../src/main/isoProvider'
 
 describe('isoProvider', () => {
@@ -28,6 +32,21 @@ describe('isoProvider', () => {
   it('should have base verifyChecksum on IsoProvider', () => {
     const provider = new isoProvider.IsoProvider()
     expect(provider.verifyChecksum).toBe(isoProvider.IsoProvider.prototype.verifyChecksum)
+  })
+
+  it('should distinguish a matching SHA-256 checksum from a mismatch', async () => {
+    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'iso-checksum-test-'))
+    const filePath = path.join(directory, 'sample.iso')
+    fs.writeFileSync(filePath, 'checksum fixture')
+    const expected = crypto.createHash('sha256').update('checksum fixture').digest('hex')
+    const provider = new isoProvider.IsoProvider()
+
+    try {
+      expect(await provider.verifyChecksum(filePath, expected)).toBe(true)
+      expect(await provider.verifyChecksum(filePath, '0'.repeat(64))).toBe(false)
+    } finally {
+      fs.rmSync(directory, { recursive: true, force: true })
+    }
   })
 
   it('should extract version from iso filename', () => {

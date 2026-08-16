@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState, useCallback } from 'react'
+import React, { Component, useEffect, useState, useCallback, useRef } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import Sidebar from './components/Sidebar'
@@ -43,9 +43,11 @@ function App () {
   const [catalog, setCatalog] = useState({})
   const [drives, setDrives] = useState([])
   const [selectedDrive, setSelectedDrive] = useState(null)
+  const selectedDriveRef = useRef(null)
   const [search, setSearch] = useState('')
-  const [activeDownload, setActiveDownload] = useState(null)
+  const [downloadMap, setDownloadMap] = useState({})
   const [progressMap, setProgressMap] = useState({})
+  const [queueState, setQueueState] = useState({ concurrency: 2, active: 0, queued: 0, total: 0 })
   const [installedIsos, setInstalledIsos] = useState([])
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [archFilter, setArchFilter] = useState('x86_64')
@@ -106,7 +108,7 @@ function App () {
       setSpaceWarning(null)
       const res = await window.ventoy.startDownload(distro.id, mountPath)
       const { downloadId, release } = res
-      setActiveDownload({ downloadId, distro, mountPath, release })
+      setDownloadMap(prev => ({ ...prev, [downloadId]: { downloadId, distro, mountPath, release } }))
       addActivity(`Downloading ${distro.name}`, 'info')
     } catch (e) {
       console.error('startDownload failed', e)
@@ -117,12 +119,21 @@ function App () {
   const onCancelDownload = useCallback(async (downloadId) => {
     try {
       await window.ventoy.cancelDownload(downloadId)
-      setActiveDownload(null)
+      setDownloadMap(prev => { const m = { ...prev }; delete m[downloadId]; return m })
       addActivity('Download cancelled', 'warning')
     } catch (e) {
       console.error('cancel failed', e)
     }
   }, [addActivity])
+
+  const onSetConcurrency = useCallback(async (concurrency) => {
+    try {
+      await window.ventoy.setDownloadConcurrency(concurrency)
+      setQueueState(prev => ({ ...prev, concurrency }))
+    } catch (e) {
+      console.error('set concurrency failed', e)
+    }
+  }, [])
 
   const onSelectDrive = useCallback((drive) => {
     setSelectedDrive(drive)
@@ -157,6 +168,10 @@ function App () {
         setSpaceWarning(null)
       }
     }).catch(() => {})
+  }, [selectedDrive])
+
+  useEffect(() => {
+    selectedDriveRef.current = selectedDrive
   }, [selectedDrive])
 
   useEffect(() => {
@@ -199,20 +214,30 @@ function App () {
     })
     const unsubComplete = window.ventoy.onDownloadComplete((payload) => {
       setProgressMap(prev => ({ ...prev, [payload.downloadId]: { ...prev[payload.downloadId], completed: true, sha256: payload.sha256, filePath: payload.filePath } }))
-      setActiveDownload(ad => (ad && ad.downloadId === payload.downloadId) ? null : ad)
-      if (selectedDrive) {
-        scanIsos(selectedDrive.ventoyDataPath || selectedDrive.mountPath)
+      setDownloadMap(prev => { const m = { ...prev }; delete m[payload.downloadId]; return m })
+      const activeDrive = selectedDriveRef.current
+      if (activeDrive) {
+        scanIsos(activeDrive.ventoyDataPath || activeDrive.mountPath)
       }
       addActivity('Download complete', 'success')
     })
     const unsubError = window.ventoy.onError((payload) => {
       setProgressMap(prev => ({ ...prev, [payload.downloadId]: { ...prev[payload.downloadId], error: payload.message } }))
-      setActiveDownload(ad => (ad && ad.downloadId === payload.downloadId) ? null : ad)
+      setDownloadMap(prev => { const m = { ...prev }; delete m[payload.downloadId]; return m })
       addActivity('Download failed', 'error')
     })
 
+    const unsubQueueState = window.ventoy.onQueueState((payload) => {
+      setQueueState(payload)
+    })
+
     const unsubDevicesChanged = window.ventoy.onDevicesChanged((data) => {
-      setDrives(data.drives || [])
+      const nextDrives = data.drives || []
+      setDrives(nextDrives)
+      setSelectedDrive(current => {
+        const preserved = current && nextDrives.find(d => d.device === current.device)
+        return preserved || nextDrives.find(d => d.ventoyConfidence === 'high' || d.ventoyConfidence === 'medium') || null
+      })
       setScanning(false)
       addActivity('USB devices changed', 'info')
     })
@@ -225,10 +250,11 @@ function App () {
       unsubProgress && unsubProgress()
       unsubComplete && unsubComplete()
       unsubError && unsubError()
+      unsubQueueState && unsubQueueState()
       unsubDevicesChanged && unsubDevicesChanged()
       unsubVentoyDetected && unsubVentoyDetected()
     }
-  }, [error, selectedDrive, scanIsos, addActivity])
+  }, [error, scanIsos, addActivity])
 
   if (error) {
     return (
@@ -243,7 +269,7 @@ function App () {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif', background: '#0f172a', color: '#e6eef8' }}>
       <TitleBar />
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        <Sidebar currentView={currentView} onNavigate={setCurrentView} installedCount={installedIsos.length} downloadCount={activeDownload ? 1 : 0} />
+        <Sidebar currentView={currentView} onNavigate={setCurrentView} installedCount={installedIsos.length} downloadCount={queueState.total} queueState={queueState} onSetConcurrency={onSetConcurrency} />
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <Header selectedDrive={selectedDrive} drives={drives} onSelectDrive={onSelectDrive} onRefresh={refreshDrives} onNavigate={setCurrentView} currentView={currentView} scanning={scanning} />
           {spaceWarning && (
@@ -271,7 +297,13 @@ function App () {
               />
             )}
             {currentView === 'downloads' && (
-              <DownloadQueue activeDownload={activeDownload} progressMap={progressMap} onCancel={onCancelDownload} />
+              <DownloadQueue
+                downloadMap={downloadMap}
+                progressMap={progressMap}
+                queueState={queueState}
+                onCancel={onCancelDownload}
+                onSetConcurrency={onSetConcurrency}
+              />
             )}
             {currentView === 'installed' && (
               <InstalledIsos isos={installedIsos} selectedDrive={selectedDrive} onDelete={onDeleteIso} onScan={() => scanIsos(selectedDrive?.ventoyDataPath || selectedDrive?.mountPath)} />

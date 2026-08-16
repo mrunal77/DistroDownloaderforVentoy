@@ -8,6 +8,10 @@
     "linux-iso-manager": "./src/main/cli-bin.cjs"
   },
   "scripts": {
+    "compile:main": "node scripts/compile-main.cjs",
+    "prestart": "npm run compile:main",
+    "prepackage": "npm run compile:main",
+    "premake": "npm run compile:main",
     "start": "node scripts/start.cjs",
     "dev": "node scripts/start.cjs",
     "package": "electron-forge package",

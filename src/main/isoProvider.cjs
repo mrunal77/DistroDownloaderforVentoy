@@ -35,15 +35,22 @@ class IsoProvider {
         try {
             const hash = crypto_1.default.createHash(algorithm);
             const fd = await fs_1.default.promises.open(filePath, 'r');
-            const chunkSize = 4 * 1024 * 1024;
-            let offset = 0;
-            const { size } = await fd.stat();
-            while (offset < size) {
-                const { buffer } = await fd.read({ buffer: Buffer.alloc(chunkSize), offset, length: chunkSize });
-                hash.update(buffer.slice(0, buffer.length));
-                offset += buffer.length;
+            try {
+                const chunkSize = 4 * 1024 * 1024;
+                let position = 0;
+                const { size } = await fd.stat();
+                while (position < size) {
+                    const buffer = Buffer.allocUnsafe(Math.min(chunkSize, size - position));
+                    const { bytesRead } = await fd.read(buffer, 0, buffer.length, position);
+                    if (bytesRead === 0)
+                        break;
+                    hash.update(buffer.subarray(0, bytesRead));
+                    position += bytesRead;
+                }
             }
-            await fd.close();
+            finally {
+                await fd.close();
+            }
             const actual = hash.digest('hex').toLowerCase();
             return actual === expectedChecksum.toLowerCase();
         }
@@ -61,14 +68,12 @@ class StaticProvider extends IsoProvider {
     async getLatestRelease() {
         if (!this.iso)
             throw new Error('Static provider missing iso config');
-        const downloadUrl = this.iso.downloadUrl || this.iso.download_url || '';
-        const isoName = this.iso.fileName || this.iso.file_name || path_1.default.basename(downloadUrl);
         return {
             distro: this.config.name || 'Unknown',
             version: this.config.version || 'latest',
             architecture: this.config.arch || 'x86_64',
-            iso_name: isoName,
-            download_url: downloadUrl,
+            iso_name: this.iso.fileName || this.iso.file_name || path_1.default.basename(this.iso.downloadUrl || this.iso.download_url || ''),
+            download_url: this.iso.downloadUrl || this.iso.download_url || '',
             size: this.iso.size || null,
             sha256: this.iso.sha256 || null,
             release_date: this.iso.releaseDate || this.iso.release_date || null,

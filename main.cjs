@@ -15,19 +15,11 @@ const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 const fs = require('fs')
 
-app.disableHardwareAcceleration()
-
-app.commandLine.appendSwitch('disable-gpu')
-app.commandLine.appendSwitch('disable-gpu-compositing')
-app.commandLine.appendSwitch('disable-software-rasterizer')
-app.commandLine.appendSwitch('disable-gpu-sandbox')
-app.commandLine.appendSwitch('in-process-gpu')
-app.commandLine.appendSwitch('no-sandbox')
-app.commandLine.appendSwitch('disable-features', 'VaapiVideoDecoder,WebRtcHideLocalIpsWithMdns,GpuSandbox')
-app.commandLine.appendSwitch('ignore-gpu-blocklist')
-app.commandLine.appendSwitch('disable-accelerated-2d-canvas')
-app.commandLine.appendSwitch('disable-accelerated-video-decode')
-app.commandLine.appendSwitch('disable-accelerated-video-encode')
+if (process.platform === 'linux') {
+  // Opt into Chromium's VA-API decode path. Driver support remains the final
+  // authority, so unsupported systems fall back to software rendering safely.
+  app.commandLine.appendSwitch('enable-features', 'VaapiVideoDecoder')
+}
 
 let mainWindow = null
 
@@ -57,6 +49,31 @@ function validateMountPath (mountPath) {
     throw new Error('Invalid mount path: path does not exist')
   }
   return mountPath
+}
+
+function validateVentoyTargetMount (mountPath) {
+  validateMountPath(mountPath)
+  const drive = usbDetection.detectAllDrives().find(candidate =>
+    candidate.ventoyDataPath === mountPath &&
+    (candidate.ventoyConfidence === 'high' || candidate.ventoyConfidence === 'medium')
+  )
+  if (!drive) {
+    throw new Error('Select a detected Ventoy data partition before downloading')
+  }
+  return mountPath
+}
+
+function validateDownloadUrl (downloadUrl) {
+  let parsed
+  try {
+    parsed = new URL(downloadUrl)
+  } catch {
+    throw new Error('Invalid download URL')
+  }
+  if (parsed.protocol !== 'https:') {
+    throw new Error('Downloads must use HTTPS')
+  }
+  return parsed.href
 }
 
 function validateDistroId (distroId) {
@@ -142,9 +159,9 @@ function createWindow () {
     console.log('Page failed to load:', errorCode, errorDescription)
   })
 
-  mainWindow.webContents.on('console-message', (event, level, message, line, sourceId) => {
-    const prefix = level === 2 ? 'Renderer Error' : level === 3 ? 'Renderer Warning' : 'Renderer Log'
-    console.log(prefix + ' [' + sourceId + ':' + line + ']:', message)
+  mainWindow.webContents.on('console-message', (event, details) => {
+    const prefix = details.level === 2 ? 'Renderer Error' : details.level === 3 ? 'Renderer Warning' : 'Renderer Log'
+    console.log(prefix + ' [' + details.sourceId + ':' + details.lineNumber + ']:', details.message)
   })
 
   const devServerUrl = process.env.MAIN_WINDOW_VITE_DEV_SERVER_URL || (typeof MAIN_WINDOW_VITE_DEV_SERVER_URL !== 'undefined' ? MAIN_WINDOW_VITE_DEV_SERVER_URL : null)
@@ -226,7 +243,7 @@ app.whenReady().then(() => {
 
   ipcMain.handle('start-download', async (event, { distroId, targetMountPath }) => {
     validateDistroId(distroId)
-    validateMountPath(targetMountPath)
+    validateVentoyTargetMount(targetMountPath)
 
     const cat = catalog.loadCatalog()
     const distro = catalog.getDistroById(cat, distroId)
@@ -235,6 +252,7 @@ app.whenReady().then(() => {
     const release = await provider.getLatestRelease()
 
     validateFileName(release.iso_name)
+    validateDownloadUrl(release.download_url)
 
     const storageInfo = usbDetection.getStorageInfo(targetMountPath)
     const requiredBytes = release.size || 0
@@ -262,6 +280,7 @@ app.whenReady().then(() => {
       }
     }, {
       onProgress: (p) => sendProgress('download-progress', { downloadId, ...p }),
+      onQueueChange: (state) => sendProgress('queue-state', state),
       onComplete: (r) => {
         logger.download('Download complete', { downloadId, filePath: r.filePath, sha256: r.sha256 })
         sendProgress('download-complete', { downloadId, ...r })
@@ -270,9 +289,7 @@ app.whenReady().then(() => {
         logger.error('Download error', { downloadId, message: e.message })
         sendProgress('download-error', { downloadId, message: e.message })
       }
-    }).catch(() => {
-        console.error('Download failed')
-      })
+    })
 
     return { downloadId, release }
   })
@@ -283,6 +300,16 @@ app.whenReady().then(() => {
     }
     const ok = downloadManager.cancelDownload(downloadId)
     return { success: !!ok }
+  })
+
+  ipcMain.handle('get-queue-state', async () => {
+    return downloadManager.getQueueState()
+  })
+
+  ipcMain.handle('set-download-concurrency', async (event, concurrency) => {
+    const n = Math.max(1, Math.min(8, Number(concurrency) || 2))
+    downloadManager.setQueueConcurrency('default', n)
+    return { concurrency: n }
   })
 
   ipcMain.handle('check-download-space', async (event, { distroId, targetMountPath }) => {
@@ -341,7 +368,7 @@ app.whenReady().then(() => {
   })
 
   ipcMain.handle('delete-iso', async (event, { mountPath, isoName }) => {
-    validateMountPath(mountPath)
+    validateVentoyTargetMount(mountPath)
     validateIsoName(isoName)
     const target = path.join(mountPath, isoName)
     if (!fs.existsSync(target)) throw new Error('ISO not found: ' + isoName)
@@ -409,6 +436,10 @@ app.whenReady().then(() => {
     if (!distro) return null
     return distro
   })
+})
+
+app.on('gpu-info-update', () => {
+  console.log('GPU feature status:', app.getGPUFeatureStatus())
 })
 
 app.on('window-all-closed', () => {

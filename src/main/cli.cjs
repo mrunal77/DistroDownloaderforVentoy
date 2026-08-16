@@ -319,7 +319,7 @@ function createProvider(distro) {
         size: distro.size,
         sha256: distro.sha256,
         releaseDate: distro.releaseDate || distro.release_date
-    }
+    };
     return new isoProvider_1.StaticProvider({
         name: distro.name,
         version: distro.version,

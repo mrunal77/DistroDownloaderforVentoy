@@ -46,7 +46,7 @@ async function main () {
   }
 
   console.log('Starting Electron...')
-  const electron = spawn(electronBin, ['.', '--disable-gpu', '--disable-gpu-sandbox', '--in-process-gpu', '--no-sandbox'], {
+  const electron = spawn(electronBin, ['.'], {
     cwd: process.cwd(),
     stdio: 'inherit',
     shell: isWin,

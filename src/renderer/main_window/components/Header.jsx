@@ -1,6 +1,7 @@
 import React from 'react'
 
 export default function Header ({ selectedDrive, drives, onSelectDrive, onRefresh, onNavigate, currentView, scanning }) {
+  const ventoyDrives = drives.filter(d => d.ventoyConfidence === 'high' || d.ventoyConfidence === 'medium')
   return (
     <div style={{ height: 64, background: '#0b1220', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', flexShrink: 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -21,7 +22,7 @@ export default function Header ({ selectedDrive, drives, onSelectDrive, onRefres
           style={{ padding: '8px 12px', borderRadius: 6, background: '#1e293b', color: '#e6eef8', border: '1px solid rgba(255,255,255,0.1)', fontSize: 13, minWidth: 280 }}
         >
           <option value="">No drive selected</option>
-          {drives.map(d => {
+          {ventoyDrives.map(d => {
             const val = d.ventoyDataPath || d.mountPath || d.device
             const label = d.ventoyConfidence === 'high' ? '🟢 Ventoy' :
                           d.ventoyConfidence === 'medium' ? '🟡 Ventoy-like' :
