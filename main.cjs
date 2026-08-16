@@ -183,11 +183,11 @@ app.whenReady().then(() => {
   /* ─── USB Drive Detection IPC Handlers ─── */
 
   ipcMain.handle('get-usb-drives', async () => {
-    return usbDetection.detectAllDrives()
+    return usbDetection.detectAllDrives().filter(d => d.isVentoy)
   })
 
   ipcMain.handle('refresh-usb-drives', async () => {
-    return usbDetection.detectAllDrives()
+    return usbDetection.detectAllDrives().filter(d => d.isVentoy)
   })
 
   ipcMain.handle('get-drive-details', async (event, devicePath) => {

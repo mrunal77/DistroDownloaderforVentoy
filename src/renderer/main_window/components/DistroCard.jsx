@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function DistroCard ({ distro, onDownload, disabled }) {
+export default function DistroCard ({ distro, onDownload }) {
   const sizeGB = distro.size ? (distro.size / 1e9).toFixed(1) : '?'
   const version = distro.version || 'Latest'
   const desktop = distro.desktop || distro.editions?.[0]?.desktop || 'N/A'
@@ -27,21 +27,19 @@ export default function DistroCard ({ distro, onDownload, disabled }) {
         </div>
         <button
           onClick={onDownload}
-          disabled={disabled}
           style={{
             padding: '8px 16px',
             borderRadius: 6,
             border: 'none',
             fontSize: 13,
             fontWeight: 500,
-            cursor: disabled ? 'not-allowed' : 'pointer',
-            background: disabled ? '#4b5563' : '#2563eb',
+            cursor: 'pointer',
+            background: '#2563eb',
             color: 'white',
-            opacity: disabled ? 0.6 : 1,
             transition: 'all 0.15s'
           }}
         >
-          {disabled ? 'Select Drive' : 'Download'}
+          Download
         </button>
       </div>
     </div>

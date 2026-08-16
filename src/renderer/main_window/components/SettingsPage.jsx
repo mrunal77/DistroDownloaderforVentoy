@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
 export default function SettingsPage () {
-  const [downloadDir, setDownloadDir] = useState('~/Downloads')
   const [concurrency, setConcurrency] = useState(2)
   const [autoVerify, setAutoVerify] = useState(true)
   const [retryCount, setRetryCount] = useState(3)
@@ -11,7 +10,6 @@ export default function SettingsPage () {
       try {
         const saved = await window.ventoy.getSettings()
         if (saved) {
-          setDownloadDir(saved.downloadDir || '~/Downloads')
           setConcurrency(saved.concurrency || 2)
           setAutoVerify(saved.autoVerify ?? true)
           setRetryCount(saved.retryCount || 3)
@@ -24,7 +22,7 @@ export default function SettingsPage () {
 
   const saveSettings = async () => {
     try {
-      await window.ventoy.setSettings({ downloadDir, concurrency, autoVerify, retryCount })
+      await window.ventoy.setSettings({ concurrency, autoVerify, retryCount })
       alert('Settings saved')
     } catch (e) {
       alert('Failed to save settings: ' + e.message)
@@ -36,11 +34,6 @@ export default function SettingsPage () {
       <h2 style={{ margin: '0 0 20px 0', fontSize: 20, fontWeight: 600 }}>Settings</h2>
 
       <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: 20, display: 'flex', flexDirection: 'column', gap: 20 }}>
-        <div>
-          <label style={{ display: 'block', fontSize: 13, color: '#9aa7bd', marginBottom: 6 }}>Download Directory</label>
-          <input value={downloadDir} onChange={e => setDownloadDir(e.target.value)} style={{ width: '100%', padding: '10px 14px', borderRadius: 8, background: '#1e293b', color: '#e6eef8', border: '1px solid rgba(255,255,255,0.08)', outline: 'none', fontSize: 14 }} />
-        </div>
-
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <div>
             <label style={{ display: 'block', fontSize: 13, color: '#9aa7bd', marginBottom: 6 }}>Concurrent Downloads</label>

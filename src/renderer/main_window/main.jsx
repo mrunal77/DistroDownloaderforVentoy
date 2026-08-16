@@ -10,6 +10,7 @@ import InstalledIsos from './components/InstalledIsos'
 import SettingsPage from './components/SettingsPage'
 import ActivityPanel from './components/ActivityPanel'
 import UsbDiagnostics from './components/UsbDiagnostics'
+import AboutPage from './components/AboutPage'
 
 class ErrorBoundary extends Component {
   constructor (props) {
@@ -92,7 +93,7 @@ function App () {
   const onStartDownload = useCallback(async (distro) => {
     const mountPath = selectedDrive ? (selectedDrive.ventoyDataPath || selectedDrive.mountPath) : null
     if (!mountPath) {
-      alert('Select a target Ventoy drive first')
+      alert('No Ventoy drive detected. Please connect a Ventoy USB drive and refresh.')
       return
     }
     try {
@@ -232,7 +233,7 @@ function App () {
     })
 
     const unsubDevicesChanged = window.ventoy.onDevicesChanged((data) => {
-      const nextDrives = data.drives || []
+      const nextDrives = (data.drives || []).filter(d => d.isVentoy)
       setDrives(nextDrives)
       setSelectedDrive(current => {
         const preserved = current && nextDrives.find(d => d.device === current.device)
@@ -309,6 +310,7 @@ function App () {
               <InstalledIsos isos={installedIsos} selectedDrive={selectedDrive} onDelete={onDeleteIso} onScan={() => scanIsos(selectedDrive?.ventoyDataPath || selectedDrive?.mountPath)} />
             )}
             {currentView === 'settings' && <SettingsPage />}
+            {currentView === 'about' && <AboutPage />}
             {currentView === 'activity' && <ActivityPanel activities={activities} />}
             {currentView === 'diagnostics' && <UsbDiagnostics />}
           </div>

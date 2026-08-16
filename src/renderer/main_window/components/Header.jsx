@@ -1,7 +1,6 @@
 import React from 'react'
 
-export default function Header ({ selectedDrive, drives, onSelectDrive, onRefresh, onNavigate, currentView, scanning }) {
-  const ventoyDrives = drives.filter(d => d.ventoyConfidence === 'high' || d.ventoyConfidence === 'medium')
+export default function Header ({ selectedDrive, drives: _drives, onSelectDrive: _onSelectDrive, onRefresh, onNavigate, currentView, scanning }) {
   return (
     <div style={{ height: 64, background: '#0b1220', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', flexShrink: 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -13,27 +12,16 @@ export default function Header ({ selectedDrive, drives, onSelectDrive, onRefres
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <select
-          value={selectedDrive ? (selectedDrive.ventoyDataPath || selectedDrive.mountPath || selectedDrive.device) : ''}
-          onChange={(e) => {
-            const found = drives.find(d => (d.ventoyDataPath || d.mountPath || d.device) === e.target.value)
-            onSelectDrive(found)
-          }}
-          style={{ padding: '8px 12px', borderRadius: 6, background: '#1e293b', color: '#e6eef8', border: '1px solid rgba(255,255,255,0.1)', fontSize: 13, minWidth: 280 }}
-        >
-          <option value="">No drive selected</option>
-          {ventoyDrives.map(d => {
-            const val = d.ventoyDataPath || d.mountPath || d.device
-            const label = d.ventoyConfidence === 'high' ? '🟢 Ventoy' :
-                          d.ventoyConfidence === 'medium' ? '🟡 Ventoy-like' :
-                          d.isVentoy ? '🟡 Possible Ventoy' : '⚪ USB'
-            return (
-              <option key={d.device} value={val}>
-                {label} {d.model || d.name} — {val}
-              </option>
-            )
-          })}
-        </select>
+        {selectedDrive ? (
+          <div style={{ fontSize: 13, color: '#9aa7bd', background: 'rgba(255,255,255,0.04)', padding: '8px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span>🟢</span>
+            <span>{selectedDrive.model || selectedDrive.name} — {selectedDrive.ventoyDataPath || selectedDrive.mountPath}</span>
+          </div>
+        ) : (
+          <div style={{ fontSize: 13, color: '#64748b', background: 'rgba(255,255,255,0.04)', padding: '8px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.06)' }}>
+            No Ventoy drive detected
+          </div>
+        )}
 
         <button
           onClick={onRefresh}

@@ -48,13 +48,6 @@ export default function Dashboard ({ catalog, search, setSearch, selectedCategor
 
   return (
     <div>
-      {!selectedDrive && (
-        <div style={{ background: 'rgba(217,119,6,0.1)', border: '1px solid rgba(217,119,6,0.3)', color: '#fbbf24', padding: 14, borderRadius: 10, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ fontSize: 20 }}>⚠️</span>
-          <span>Select a Ventoy USB drive from the header to enable downloads.</span>
-        </div>
-      )}
-
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20, marginBottom: 24 }}>
         <VentoyCard drive={selectedDrive} onRefresh={addActivity} scanning={scanning} />
       </div>
@@ -88,7 +81,7 @@ export default function Dashboard ({ catalog, search, setSearch, selectedCategor
         )}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
           {filtered.map(d => (
-            <DistroCard key={d.id} distro={d} onDownload={() => onStartDownload(d)} disabled={!selectedDrive} />
+            <DistroCard key={d.id} distro={d} onDownload={() => onStartDownload(d)} />
           ))}
         </div>
       </div>
