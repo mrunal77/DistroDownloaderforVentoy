@@ -8,7 +8,7 @@ import fs from 'fs'
 import path from 'path'
 import crypto from 'crypto'
 
-interface IsoProviderConfig {
+export interface IsoProviderConfig {
   name?: string
   iso?: { downloadUrl?: string; download_url?: string; fileName?: string; file_name?: string; size?: number; sha256?: string; releaseDate?: string; release_date?: string }
   apiUrl?: string
@@ -40,7 +40,7 @@ interface IsoProviderConfig {
   providerType?: string
 }
 
-interface IsoRelease {
+export interface IsoRelease {
   distro: string
   version: string
   architecture: string

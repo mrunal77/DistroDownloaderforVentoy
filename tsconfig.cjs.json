@@ -16,6 +16,6 @@
     "ignoreDeprecations": "6.0",
     "types": ["node", "electron"]
   },
-  "include": ["src/main/*.ts"],
+  "include": ["src/main/**/*.ts"],
   "exclude": ["node_modules", "dist", ".vite"]
 }
